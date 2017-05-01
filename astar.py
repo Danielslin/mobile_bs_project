@@ -16,9 +16,9 @@ def dis(node1, node2):
 
 class AStarNode(object):
 
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+    def __init__(self, *coo):
+        self.x = coo[0]
+        self.y = coo[1]
         self.attr = "ground"
         self.parent = None
 
