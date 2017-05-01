@@ -1,6 +1,6 @@
 # coding:UTF-8
 
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 import math
 
 grid = namedtuple('grid', ['x', 'y'])
@@ -19,7 +19,6 @@ class AStarNode(object):
     def __init__(self, *coo):
         self.x = coo[0]
         self.y = coo[1]
-        self.attr = "ground"
         self.parent = None
 
     def __eq__(self, other):
@@ -33,3 +32,50 @@ class AStarNode(object):
 
     def __repr__(self):
         return "AStarNode(x=%s, y=%s)" % (self.x, self.y)
+
+    def neighbors(self, exist_map):
+        n = []
+        for x in range(self.x - 1, self.x + 2):
+            for y in range(self.y - 1, self.y + 2):
+                if x != self.x and y != self.y and exist_map[AStarNode(x, y)] == True:
+                    n.append(AStarNode(x, y))
+        return n
+
+    def gn(self, start_node):
+        return dis(self, start_node)
+
+    def hn(self, end_node):
+        return manhattan_dis(self, end_node)
+
+    def fn(self, start, end):
+        return self.gn(start) + self.hn(end)
+
+
+def init_map(barrier_list, x_range, y_range):
+    map = defaultdict(bool)
+    for i in range(x_range):
+        for j in range(y_range):
+            if AStarNode(i, j) not in barrier_list:
+                map[AStarNode(i, j)] = True
+    return map
+
+
+def A_star(exist_map, start, end):
+    open_list = [start]
+    close_list = []
+    while (len(open_list)) and (end not in close_list):
+        open_list.sort(key=AStarNode.fn(start, end))
+        current = open_list[0]
+        open_list.pop(0)
+        neighbors = current.neighbors(exist_map)
+        for neighbor in neighbors:
+            if neighbor in close_list:
+                continue
+            if exist_map[neighbor] == False:
+                continue
+
+            if neighbor not in open_list:
+                open_list.append(neighbor)
+                open_list[-1].parent = current
+            elif neighbor.gn(start) > (current.gn(start) + dis(current, neighbor)):
+                open_list[open_list.index(neighbor)].parent = current
