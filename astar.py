@@ -1,30 +1,35 @@
 # coding:UTF-8
 
 from collections import namedtuple
+import math
 
-grid = namedtuple('grid', ['x', 'y', 'accessable'])
-
-
-def init_map(x_range, y_range):
-    temp_set = set()
-    for i in range(x_range):
-        for j in range(y_range):
-            temp_set.add(grid(x=i, y=j, accessable=1))
-
-    return temp_set
+grid = namedtuple('grid', ['x', 'y'])
 
 
-def set_barrier(exist_map, set_of_grids):
-    if set_of_grids.issubset(exist_map):
-        for g in set_of_grids:
-            t = exist_map.pop(g)
-            changed_t = grid(x=t.x, y=t.y, accessable=0)
-            exist_map.add(changed_t)
-    else:
-        print "invalid barrier location"
+def manhattan_dis(node1, node2):
+    return abs(node1.x - node2.x) + abs(node1.y - node2.y)
 
 
-def astar(exist_map, start_grid, goal_grid):
-    open_set = set()
-    close_set = set([start])
-    pass
+def dis(node1, node2):
+    return math.sqrt((node1.x - node2.x) ** 2 + (node1.y - node2.y) ** 2) * 10
+
+
+class AStarNode(object):
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.attr = "ground"
+        self.parent = None
+
+    def __eq__(self, other):
+        return (self.x, self.y) == (other.x, other.y)
+
+    def __hash__(self):
+        return hash(str(self.x) + ',' + str(self.y))
+
+    def __str__(self):
+        return "AStarNode(%s,%s)" % (self.x, self.y)
+
+    def __repr__(self):
+        return "AStarNode(x=%s, y=%s)" % (self.x, self.y)
