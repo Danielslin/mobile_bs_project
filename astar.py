@@ -51,7 +51,7 @@ class AStarNode(object):
         return self.gn(start) + self.hn(end)
 
 
-def init_map(barrier_list, x_range, y_range):
+def init_map(x_range, y_range, barrier_list=[]):
     map = defaultdict(bool)
     for i in range(x_range):
         for j in range(y_range):
@@ -60,13 +60,19 @@ def init_map(barrier_list, x_range, y_range):
     return map
 
 
+def print_path(start, end):
+    print end
+    if start != end:
+        print_path(start, end.parent)
+
+
 def A_star(exist_map, start, end):
     open_list = [start]
     close_list = []
     while (len(open_list)) and (end not in close_list):
         open_list.sort(key=AStarNode.fn(start, end))
         current = open_list[0]
-        open_list.pop(0)
+        close_list.append(open_list.pop(0))
         neighbors = current.neighbors(exist_map)
         for neighbor in neighbors:
             if neighbor in close_list:
@@ -79,3 +85,8 @@ def A_star(exist_map, start, end):
                 open_list[-1].parent = current
             elif neighbor.gn(start) > (current.gn(start) + dis(current, neighbor)):
                 open_list[open_list.index(neighbor)].parent = current
+
+    if end not in close_list:
+        print "Path not found"
+    else:
+        print_path(start, end)
