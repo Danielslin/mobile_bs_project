@@ -11,7 +11,7 @@ def manhattan_dis(node1, node2):
 
 
 def dis(node1, node2):
-    return math.sqrt((node1.x - node2.x) ** 2 + (node1.y - node2.y) ** 2) * 10
+    return math.sqrt((node1.x - node2.x) ** 2 + (node1.y - node2.y) ** 2)
 
 
 class AStarNode(object):
@@ -28,16 +28,16 @@ class AStarNode(object):
         return hash(str(self.x) + ',' + str(self.y))
 
     def __str__(self):
-        return "AStarNode(%s,%s)" % (self.x, self.y)
+        return "(%s, %s)" % (self.x, self.y)
 
     def __repr__(self):
-        return "AStarNode(x=%s, y=%s)" % (self.x, self.y)
+        return "(%s, %s)" % (self.x, self.y)
 
     def neighbors(self, exist_map):
         n = []
         for x in range(self.x - 1, self.x + 2):
             for y in range(self.y - 1, self.y + 2):
-                if x != self.x and y != self.y and exist_map[AStarNode(x, y)] == True:
+                if (x != self.x or y != self.y) and exist_map[AStarNode(x, y)] == True:
                     n.append(AStarNode(x, y))
         return n
 
@@ -69,10 +69,17 @@ def print_path(start, end):
 def A_star(exist_map, start, end):
     open_list = [start]
     close_list = []
+    count = 0
     while (len(open_list)) and (end not in close_list):
-        open_list.sort(key=AStarNode.fn(start, end))
+        count = count + 1
+        print "\nloop " + str(count)
+        open_list.sort(key=lambda node: node.fn(start, end))
+        print "open:"
+        print open_list
         current = open_list[0]
         close_list.append(open_list.pop(0))
+        print "close:"
+        print close_list
         neighbors = current.neighbors(exist_map)
         for neighbor in neighbors:
             if neighbor in close_list:
