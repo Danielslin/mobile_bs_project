@@ -33,7 +33,7 @@ class AStarNode(object):
         return "(%s, %s)" % (self.x, self.y)
 
     def __repr__(self):
-        return "(%s, %s)" % (self.x, self.y)
+        return "AStarNode(%s, %s)" % (self.x, self.y)
 
     # 得到该点所有可通行的邻居点, 即合法的下一跳
     def neighbors(self, exist_map):
