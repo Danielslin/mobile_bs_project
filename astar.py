@@ -1,9 +1,7 @@
 # coding:UTF-8
 
-from collections import namedtuple, defaultdict
+from collections import defaultdict
 import math
-
-grid = namedtuple('grid', ['x', 'y'])
 
 
 def manhattan_dis(node1, node2):
@@ -67,21 +65,27 @@ def print_path(start, end):
 
 
 def A_star(exist_map, start, end):
+    parent_dict = {}
     open_list = [start]
     close_list = []
     count = 0
+    print "A_star algorithm begins"
     while (len(open_list)) and (end not in close_list):
         count = count + 1
         print "\nloop " + str(count)
         open_list.sort(key=lambda node: node.fn(start, end))
-        print "open:"
-        print open_list
+        print "loop initial open:" + str(open_list)
         current = open_list[0]
         close_list.append(open_list.pop(0))
-        print "close:"
-        print close_list
+        print "current:" + str(current)
+        print "put " + str(current) + " to close"
+        print "close:" + str(close_list)
         neighbors = current.neighbors(exist_map)
+        print "current neighbors:"
+        print neighbors
         for neighbor in neighbors:
+            if neighbor in parent_dict:
+                neighbor.parent = parent_dict[neighbor]
             if neighbor in close_list:
                 continue
             if exist_map[neighbor] == False:
@@ -92,8 +96,11 @@ def A_star(exist_map, start, end):
                 open_list[-1].parent = current
             elif neighbor.gn(start) > (current.gn(start) + dis(current, neighbor)):
                 open_list[open_list.index(neighbor)].parent = current
+                print "change " + str(neighbor) + "'s parent to " + str(current)
+            parent_dict[neighbor] = neighbor.parent
+            print str(neighbor) + " parent: " + str(neighbor.parent)
 
     if end not in close_list:
         print "Path not found"
     else:
-        print_path(start, end)
+        print_path(start, close_list[close_list.index(end)])
