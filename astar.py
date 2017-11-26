@@ -40,7 +40,7 @@ class AStarNode(object):
         n = []
         for x in range(self.x - 1, self.x + 2):
             for y in range(self.y - 1, self.y + 2):
-                if (x != self.x or y != self.y) and exist_map[AStarNode(x, y)] == True:
+                if (x != self.x or y != self.y) and exist_map[AStarNode(x, y)]:
                     n.append(AStarNode(x, y))
         return n
 
@@ -98,7 +98,7 @@ def A_star(exist_map, start, end):
                 neighbor.parent = parent_dict[neighbor]
             if neighbor in close_list:
                 continue
-            if exist_map[neighbor] == False:
+            if not exist_map[neighbor]:
                 continue
 
             if neighbor not in open_list:

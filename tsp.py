@@ -19,7 +19,7 @@ def dis(A, B):
     if A == B:
         return 0.0
     else:
-        return ((A.x - B.x) ** 2 + (A.y - B.y) ** 2) ** 0.5
+        return round((((A.x - B.x) ** 2 + (A.y - B.y) ** 2) ** 0.5), 4)
 
 
 def greedy_sol_tsp(list_of_nodes):
@@ -35,16 +35,22 @@ def greedy_sol_tsp(list_of_nodes):
             else:
                 dis_matrix[num].append(dis(node, list_of_nodes[i]))
             print "distance of node", num, "and node", i, "is", dis_matrix[num][i]
-
     reached_nodes = []
     current_node = 0
     next_node = 0
+    t = []
+    print "current node:", current_node
     while (len(reached_nodes) < len(list_of_nodes) - 1):
-            next_node = dis_matrix[current_node].index(min(dis_matrix[current_node]))
-            if next_node not in reached_nodes:
-                sum_dis = sum_dis + dis_matrix[current_node][next_node]
-                reached_nodes.append(current_node)
-                current_node = next_node
-            else:
-                
-
+        t = dis_matrix[current_node][:]
+        t.sort()
+        print t
+        reached_nodes.append(current_node)
+        while(next_node in reached_nodes):
+            next_node = dis_matrix[current_node].index(t.pop(0))
+        sum_dis = sum_dis + dis_matrix[current_node][next_node]
+        print "next node:", next_node
+        current_node = next_node
+    reached_nodes.append(current_node)
+    print "order of reaching nodes:", reached_nodes
+    print "sum is", sum_dis
+    return sum_dis
