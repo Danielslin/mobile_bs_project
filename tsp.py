@@ -33,13 +33,22 @@ def dis_matrix(list_of_nodes):
                 dis_matrix[num].append(INFINITY)
             else:
                 dis_matrix[num].append(dis(node, list_of_nodes[i]))
-    # print "distance of node", num, "and node", i, "is", dis_matrix[num][i]
+            # print "distance of node", num, "and node", i, "is", dis_matrix[num][i]
     return dis_matrix
+
+
+def sum_dis(dis_matrix, reached_nodes):
+    sum = 0
+    for i in range(len(reached_nodes)):
+        if i == len(reached_nodes) - 1:
+            sum += dis_matrix[reached_nodes[i]][reached_nodes[0]]
+        else:
+            sum += dis_matrix[reached_nodes[i]][reached_nodes[i + 1]]
+    return sum
 
 
 def greedy_sol_tsp(dis_matrix):
     reached_nodes = []
-    sum_dis = 0.0
     current_node = 0
     next_node = 0
     t = []
@@ -51,11 +60,30 @@ def greedy_sol_tsp(dis_matrix):
         reached_nodes.append(current_node)
         while(next_node in reached_nodes):
             next_node = dis_matrix[current_node].index(t.pop(0))
-        sum_dis = sum_dis + dis_matrix[current_node][next_node]
         print current_node, "-->", next_node, "distance:", dis_matrix[current_node][next_node]
         current_node = next_node
     reached_nodes.append(current_node)
     print current_node, "-->", reached_nodes[0], "distance:", dis_matrix[current_node][reached_nodes[0]]
     # print "order of reaching nodes:", reached_nodes
-    # print "sum is", sum_dis
-    return reached_nodes, sum_dis
+    return reached_nodes
+
+
+def opt(dis_matrix, order_of_nodes, limit=1000):
+    former_order = order_of_nodes[:]
+    count = 0
+    while(count < limit):
+        former_sum = sum_dis(dis_matrix, former_order)
+        opted_order = former_order[:]
+        left, right = random.randint(0, len(former_order) - 1), random.randint(0, len(former_order) - 1)
+        if left > right:
+            left, right = right, left
+        t = opted_order[left:right + 1]
+        t.reverse()
+        opted_order[left:right + 1] = t
+        if sum_dis(dis_matrix, opted_order) < former_sum:
+            former_order = opted_order
+            count = 0
+        else:
+            count += 1
+
+    return former_order
