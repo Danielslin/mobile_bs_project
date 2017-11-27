@@ -6,6 +6,7 @@ from defi import *
 INFINITY = 9999.0
 
 
+# 随机生成点
 def rand_node_gen(map_size, node_amount):
     nodes = []
     for i in range(node_amount):
@@ -15,6 +16,7 @@ def rand_node_gen(map_size, node_amount):
     return nodes
 
 
+# 获取两点间的距离
 def dis(A, B):
     if A == B:
         return 0.0
@@ -22,6 +24,7 @@ def dis(A, B):
         return round((((A.x - B.x) ** 2 + (A.y - B.y) ** 2) ** 0.5), 4)
 
 
+# 生成距离矩阵
 def dis_matrix(list_of_nodes):
     dis_matrix = []
     for num, node in enumerate(list_of_nodes):
@@ -37,6 +40,7 @@ def dis_matrix(list_of_nodes):
     return dis_matrix
 
 
+# 给定路径顺序，对距离求和
 def sum_dis(dis_matrix, reached_nodes):
     sum = 0
     for i in range(len(reached_nodes)):
@@ -47,6 +51,7 @@ def sum_dis(dis_matrix, reached_nodes):
     return sum
 
 
+# 贪婪法获取TSP的初始解
 def greedy_sol_tsp(dis_matrix):
     reached_nodes = []
     current_node = 0
@@ -60,26 +65,31 @@ def greedy_sol_tsp(dis_matrix):
         reached_nodes.append(current_node)
         while(next_node in reached_nodes):
             next_node = dis_matrix[current_node].index(t.pop(0))
-        print current_node, "-->", next_node, "distance:", dis_matrix[current_node][next_node]
+        # print current_node, "-->", next_node, "distance:", dis_matrix[current_node][next_node]
         current_node = next_node
     reached_nodes.append(current_node)
-    print current_node, "-->", reached_nodes[0], "distance:", dis_matrix[current_node][reached_nodes[0]]
+    # print current_node, "-->", reached_nodes[0], "distance:", dis_matrix[current_node][reached_nodes[0]]
     # print "order of reaching nodes:", reached_nodes
     return reached_nodes
 
 
+# 2-opt优化贪婪法的解
 def opt(dis_matrix, order_of_nodes, limit=1000):
     former_order = order_of_nodes[:]
     count = 0
     while(count < limit):
         former_sum = sum_dis(dis_matrix, former_order)
         opted_order = former_order[:]
+        # 随机生成两个交换的元素
         left, right = random.randint(0, len(former_order) - 1), random.randint(0, len(former_order) - 1)
+        # 防止左边界比右边界大
         if left > right:
             left, right = right, left
+        # 左右边界之间的序列反转
         t = opted_order[left:right + 1]
         t.reverse()
         opted_order[left:right + 1] = t
+        # 对新序列求和
         if sum_dis(dis_matrix, opted_order) < former_sum:
             former_order = opted_order
             count = 0
