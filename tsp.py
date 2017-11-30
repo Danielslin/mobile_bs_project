@@ -21,6 +21,7 @@ def dis(A, B):
     if A == B:
         return 0.0
     else:
+        # round函数保留四位小数
         return round((((A.x - B.x) ** 2 + (A.y - B.y) ** 2) ** 0.5), 4)
 
 
@@ -97,3 +98,44 @@ def opt(dis_matrix, order_of_nodes, limit=1000):
             count += 1
 
     return former_order
+
+
+# 计算叉积
+def cross_product(pA, pB, ref_p=Point_2D(0, 0)):
+    return (pA.x - ref_p.x) * (pB.y - ref_p.y) - (pB.x - ref_p.x) * (pA.y - ref_p.y)
+
+
+# 计算极角
+def cos(p, p0=Point_2D(0, 0)):
+    # 返回的是余弦值
+    return (p.x - p0.x) / (((abs(p.x - p0.x) ** 2 + 1) ** 0.5) * (abs(p.y - p0.y) ** 0.5))
+
+
+# 比较极角的大小
+# p0为参考点，向量p1-p0在p2-p0的逆时针方向，则返回1
+def cmp_angle(p1, p2, p0=Point_2D(0, 0)):
+    if cos(p1, p0) < cos(p2, p0):
+        return 1
+    elif cos(p1, p0) > cos(p2, p0):
+        return -1
+    else:
+        return 0
+
+
+# 找出给定点集的最近点
+def nearest_point(list_of_points, given_point=Point_2D(0, 0)):
+    nearest = list_of_points[0]
+    min_dis = dis(nearest, given_point)
+    for point in list_of_points:
+        current_dis = dis(point, given_point)
+        if current_dis < min_dis:
+            nearest = point
+            min_dis = current_dis
+    return nearest
+
+
+# Graham扫描算法计算凸包
+def graham_scan(list_of_points):
+    stack = []
+    p0 = nearest_point(list_of_points)
+    stack.append(p0)

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import tsp
 
 
-def drawGraph(nodes, order_of_nodes):
+def drawTSPGraph(nodes, order_of_nodes):
     G = nx.DiGraph()                 # 建立一个空的有向图G
     G.add_nodes_from(range(len(nodes)))
     pos = {}
@@ -20,23 +20,23 @@ def drawGraph(nodes, order_of_nodes):
 
 def opt_show(dis_matrix, init_order):
 
-    turns = [0, 10, 50, 100, 200, 500, 1000, 10000]
+    turns = [0, 10, 50, 100, 200, 500, 1000, 10000, 100000]
     opted_order = init_order[:]
     for i in turns:
         opted_order = tsp.opt(dis_matrix, opted_order, i)
         print opted_order
         print "Iteration limit", i, ":", tsp.sum_dis(dis_matrix, opted_order)
-        drawGraph(nodes, opted_order)
-        # plt.savefig("opted" + str(i) + ".png", dpi=256)
+        drawTSPGraph(nodes, opted_order)
+        plt.savefig("opted" + str(i) + ".png", dpi=256)
         plt.show()
 
 
-nodes = tsp.rand_node_gen(1000, 100)
+nodes = tsp.rand_node_gen(1000, 20)
 dis_matrix = tsp.dis_matrix(nodes)
 order_of_nodes = tsp.greedy_sol_tsp(dis_matrix)
 
 # opt_show(dis_matrix, order_of_nodes)
-print "All random starts"
-opt_show(dis_matrix, range(len(nodes)))
+# print "All random starts"
+# opt_show(dis_matrix, range(len(nodes)))
 print "Greedy starts"
 opt_show(dis_matrix, order_of_nodes)
