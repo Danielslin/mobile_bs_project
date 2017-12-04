@@ -20,21 +20,6 @@ def drawTSPGraph(nodes, order_of_nodes):
     nx.draw(G, pos, with_labels=True, font_size=12, node_size=48)
 
 
-def drawConvexHull(all_points, chPoints):
-    G = nx.Graph()
-    G.add_nodes_from(range(len(all_points)))
-    pos = {}
-    for i in range(len(all_points)):
-        pos.update({i: (all_points[i].x, all_points[i].y)})
-
-    for i in range(len(chPoints)):
-        if i < len(chPoints) - 1:
-            G.add_edge(all_points.index(chPoints[i]), all_points.index(chPoints[i + 1]))
-        else:
-            G.add_edge(all_points.index(chPoints[-1]), all_points.index(chPoints[0]))
-    nx.draw(G, pos, with_labels=True, font_size=12, node_size=48)
-
-
 def opt_show(dis_matrix, init_order):
 
     turns = [0, 10, 50, 100, 200, 500, 1000, 10000, 100000]
@@ -49,19 +34,21 @@ def opt_show(dis_matrix, init_order):
 
 
 # 测试凸包算法
+'''
 s = tsp.graham_scan(nodes)
-drawConvexHull(nodes, s)
+G = tsp.drawConvexHull(nodes)
 plt.show()
-
+'''
 
 # 测试TSP 2-opt算法
 
 '''
 dis_matrix = tsp.dis_matrix(nodes)
-order_of_nodes = tsp.greedy_sol_tsp(dis_matrix)
-opt_show(dis_matrix, order_of_nodes)
 print "All random starts"
 opt_show(dis_matrix, range(len(nodes)))
 print "Greedy starts"
 opt_show(dis_matrix, order_of_nodes)
 '''
+
+dis_matrix = tsp.dis_matrix(nodes)
+tsp.ch_sol_tsp(dis_matrix, nodes)

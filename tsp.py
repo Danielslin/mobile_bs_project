@@ -2,7 +2,7 @@
 
 import random
 from defi import *
-
+import networkx as nx
 INFINITY = 9999.0
 
 
@@ -145,3 +145,43 @@ def graham_scan(list_of_points):
         stack.append(point)
 
     return stack
+
+
+# 画凸包，返回一个图对象
+def drawConvexHull(all_points):
+    chPoints = graham_scan(all_points)
+    G = nx.Graph()
+    G.add_nodes_from(range(len(all_points)))
+    pos = {}
+    for i in range(len(all_points)):
+        pos.update({i: (all_points[i].x, all_points[i].y)})
+
+    for i in range(len(chPoints)):
+        if i < len(chPoints) - 1:
+            G.add_edge(all_points.index(chPoints[i]), all_points.index(chPoints[i + 1]))
+        else:
+            G.add_edge(all_points.index(chPoints[-1]), all_points.index(chPoints[0]))
+    print G.edges()
+    nx.draw(G, pos, with_labels=True, font_size=12, node_size=48)
+    return G
+
+
+def ch_sol_tsp(dis_matrix, allNodes):
+    reached_nodes = []
+    unreached_nodes = []
+    '''
+    for i in range(len(allNodes)):
+        if allNodes[i] in chNodes:
+            reached_nodes.append(i)
+        else:
+            unreached_nodes.append(i)
+    '''
+    G = drawConvexHull(allNodes)
+    for i in G.nodes():
+        if (G.degree(i) > 0) and (i not in reached_nodes):
+            reached_nodes.append(i)
+        elif G.degree(i) == 0:
+            unreached_nodes.append(i)
+
+    print reached_nodes, unreached_nodes
+    
