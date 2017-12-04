@@ -105,37 +105,45 @@ def cross_product(pA, pB, ref_p=Point_2D(0, 0)):
     return (pA.x - ref_p.x) * (pB.y - ref_p.y) - (pB.x - ref_p.x) * (pA.y - ref_p.y)
 
 
-# 计算极角
-def cos(p, p0=Point_2D(0, 0)):
-    # 返回的是余弦值
-    return (p.x - p0.x) / (((abs(p.x - p0.x) ** 2 + 1) ** 0.5) * (abs(p.y - p0.y) ** 0.5))
-
-
 # 比较极角的大小
 # p0为参考点，向量p1-p0在p2-p0的逆时针方向，则返回1
 def cmp_angle(p1, p2, p0=Point_2D(0, 0)):
-    if cos(p1, p0) < cos(p2, p0):
+    if cross_product(p1, p2, p0) < 0:
         return 1
-    elif cos(p1, p0) > cos(p2, p0):
+    elif cross_product(p1, p2, p0) > 0:
         return -1
     else:
         return 0
 
 
-# 找出给定点集的最近点
-def nearest_point(list_of_points, given_point=Point_2D(0, 0)):
-    nearest = list_of_points[0]
-    min_dis = dis(nearest, given_point)
+# 找出给定点集的距指定点最近点，默认为(0,0)
+def p0_point(list_of_points):
+    p0 = list_of_points[0]
     for point in list_of_points:
-        current_dis = dis(point, given_point)
-        if current_dis < min_dis:
-            nearest = point
-            min_dis = current_dis
-    return nearest
+        if point.y < p0.y:
+            p0 = point
+        elif point.y == p0.y:
+            if point.x < p0.x:
+                p0 = point
+
+    return p0
 
 
 # Graham扫描算法计算凸包
 def graham_scan(list_of_points):
     stack = []
-    p0 = nearest_point(list_of_points)
+    p0 = p0_point(list_of_points)
     stack.append(p0)
+    points = list_of_points[:]
+    points.remove(p0)
+    points.sort(lambda x, y: cmp_angle(x, y, p0))
+    stack.extend(points[0:2])
+    print stack
+    for point in points[2:]:
+        print "current:", point
+        while(cross_product(point, stack[-1], stack[-2]) > 0):
+            stack.pop(-1)
+        stack.append(point)
+        print stack
+
+    return stack
