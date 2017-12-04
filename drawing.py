@@ -4,6 +4,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import tsp
 
+nodes = tsp.rand_node_gen(1000, 20)
+
 
 def drawTSPGraph(nodes, order_of_nodes):
     G = nx.DiGraph()                 # 建立一个空的有向图G
@@ -46,18 +48,20 @@ def opt_show(dis_matrix, init_order):
         plt.show()
 
 
-a = tsp.rand_node_gen(100, 20)
-s = tsp.graham_scan(a)
-drawConvexHull(a, s)
+# 测试凸包算法
+s = tsp.graham_scan(nodes)
+drawConvexHull(nodes, s)
 plt.show()
 
 
-# nodes = tsp.rand_node_gen(1000, 20)
-# dis_matrix = tsp.dis_matrix(nodes)
-# order_of_nodes = tsp.greedy_sol_tsp(dis_matrix)
+# 测试TSP 2-opt算法
 
-# opt_show(dis_matrix, order_of_nodes)
-# print "All random starts"
-# opt_show(dis_matrix, range(len(nodes)))
-# print "Greedy starts"
-# opt_show(dis_matrix, order_of_nodes)
+'''
+dis_matrix = tsp.dis_matrix(nodes)
+order_of_nodes = tsp.greedy_sol_tsp(dis_matrix)
+opt_show(dis_matrix, order_of_nodes)
+print "All random starts"
+opt_show(dis_matrix, range(len(nodes)))
+print "Greedy starts"
+opt_show(dis_matrix, order_of_nodes)
+'''

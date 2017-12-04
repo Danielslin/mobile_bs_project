@@ -105,7 +105,7 @@ def cross_product(pA, pB, ref_p=Point_2D(0, 0)):
     return (pA.x - ref_p.x) * (pB.y - ref_p.y) - (pB.x - ref_p.x) * (pA.y - ref_p.y)
 
 
-# 比较极角的大小
+# 比较极角的大小，作为sort的传入参数
 # p0为参考点，向量p1-p0在p2-p0的逆时针方向，则返回1
 def cmp_angle(p1, p2, p0=Point_2D(0, 0)):
     if cross_product(p1, p2, p0) < 0:
@@ -136,14 +136,12 @@ def graham_scan(list_of_points):
     stack.append(p0)
     points = list_of_points[:]
     points.remove(p0)
+    # 将点按p0从右到左排序
     points.sort(lambda x, y: cmp_angle(x, y, p0))
     stack.extend(points[0:2])
-    print stack
     for point in points[2:]:
-        print "current:", point
         while(cross_product(point, stack[-1], stack[-2]) > 0):
             stack.pop(-1)
         stack.append(point)
-        print stack
 
     return stack
