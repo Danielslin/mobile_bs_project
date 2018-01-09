@@ -1,5 +1,6 @@
 # coding:UTF-8
 
+# Sensor map Initialzation
 import random
 import math
 import networkx as nx
@@ -46,18 +47,20 @@ class SensorNode(Point_2D):
 
 
 class SimplePolygon(object):
+    # vertexes:list of Point_2D
     def __init__(self, *vertexes):
+        self.V = None
         if len(vertexes) > 0:
             for vertex in vertexes:
                 if not isinstance(vertex, Point_2D):
                     raise TypeError
-        self.V = list(vertexes)
+            self.V = list(vertexes)
 
-    def AddVertex(self, point):
+    def AddVertex(self, point, insert_pos):
         if not isinstance(point, Point_2D):
             raise TypeError
         if point not in self.V:
-            self.V.append(point)
+            self.V.insert(insert_pos[1], point)
 
     def DelVertex(self, point):
         if point in self.V:
