@@ -7,11 +7,7 @@ from point2d import *
 
 # 获取两点间的距离
 def dis(A, B):
-    if A == B:
-        return 0.0
-    else:
-        # round函数保留四位小数
-        return round((((A.x - B.x) ** 2 + (A.y - B.y) ** 2) ** 0.5), 4)
+    return A.d(B)
 
 
 # 计算叉积

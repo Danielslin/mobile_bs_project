@@ -36,7 +36,7 @@ def graham_scan(list_of_points):
 
 
 # 画凸包，返回一个图对象
-def drawConvexHull(all_points):
+def DrawConvexHull(all_points):
     chPoints = graham_scan(all_points)
     G = nx.Graph()
     G.add_nodes_from(range(len(all_points)))
