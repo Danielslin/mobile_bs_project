@@ -44,7 +44,7 @@ def DrawPath(nodes, order_of_nodes):
     for i in range(len(nodes)):
         if i < len(nodes) - 1:
             G.add_edge(order_of_nodes[i], order_of_nodes[i + 1])
-    nx.draw(G, pos, with_labels=True, font_size=12, node_size=48)
+    nx.draw(G, pos, with_labels=True, font_size=12, node_size=96)
     return G
 
 

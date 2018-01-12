@@ -4,7 +4,9 @@
 import random
 import math
 import networkx as nx
+import matplotlib.pyplot as plt
 from point2d import *
+from tsp import *
 
 RES_CLASS = range(5)
 
@@ -49,33 +51,39 @@ class SensorNode(Point_2D):
 class SimplePolygon(object):
     # vertexes:list of Point_2D
     def __init__(self, *vertexes):
-        self.V = None
         if len(vertexes) > 0:
             for vertex in vertexes:
                 if not isinstance(vertex, Point_2D):
                     raise TypeError
-            self.V = list(vertexes)
+        self.V = list(vertexes)
+        self.V.sort(cmp=cmp_x)
+        V0 = self.V[1:]
+        V0.sort(lambda x, y: cmp_angle(x, y, self.V[0]))
+        self.V[1:] = V0
 
-    def AddVertex(self, point, insert_pos):
+    def Add(self, point):
         if not isinstance(point, Point_2D):
             raise TypeError
         if point not in self.V:
-            self.V.insert(insert_pos[1], point)
+            self.V.append(point)
+            V0 = self.V[1:]
+            V0.sort(lambda x, y: cmp_angle(x, y, self.V[0]))
+            self.V[1:] = V0
 
-    def DelVertex(self, point):
+    def Del(self, point):
         if point in self.V:
             self.V.remove(point)
 
-    def plot(self):
+    def draw(self):
         G = nx.Graph()
         G.add_nodes_from(range(len(self.V)))
         pos = {i: (self.V[i].x, self.V[i].y) for i in range(len(self.V))}
-        for i in range(len(nodes)):
-            if i < len(nodes) - 1:
-                G.add_edge(self.V[i], self.V[i + 1])
+        for i in range(len(self.V)):
+            if i < len(self.V) - 1:
+                G.add_edge(i, i + 1)
             else:
-                G.add_edge(self.V[-1], self.V[0])
-        nx.draw(G, pos)
+                G.add_edge(i, 0)
+        nx.draw(G, pos, with_labels=True)
         return G
 
 
@@ -114,3 +122,14 @@ class Map(object):
             self.sensors.append(SensorNode(X, Y, count))
             count += 1
         return self.sensors
+
+
+test = tsp()
+mapsize = 1000
+test.randomnodes(mapsize, 20)
+poly = SimplePolygon(*test.nodes)
+poly.draw()
+plt.show()
+poly.Add(RandomNode(mapsize))
+poly.draw()
+plt.show()

@@ -18,7 +18,7 @@ class tsp(object):
         self._dismatrix = []
 
     def randomnodes(self, mapsize, nodeamount):
-        self.nodes = rand_node_gen(mapsize, nodeamount)
+        self.nodes = RandomNodeGeneration(mapsize, nodeamount)
 
     def readfile(self, filename):
         with open(filename, "r") as f:
@@ -26,7 +26,7 @@ class tsp(object):
         cut_off = lines.index('NODE_COORD_SECTION\n') + 1
         EOF = lines.index('EOF\n')
         lines = lines[cut_off:EOF]
-        nodes = [Point_2D(float(line.strip().split()[1]),float(line.strip().split()[2])) for line in lines]
+        nodes = [Point_2D(x=float(line.strip().split()[1]),y=float(line.strip().split()[2])) for line in lines]
         self.nodes = nodes
         return nodes
 
@@ -43,8 +43,6 @@ class tsp(object):
                     dis_matrix[num].append(INFINITY)
                 else:
                     dis_matrix[num].append(dis(node, self.nodes[i]))
-            # print "distance of node", num, "and node", i, "is",
-            # dis_matrix[num][i]
         self._dismatrix = dis_matrix
         return dis_matrix
 

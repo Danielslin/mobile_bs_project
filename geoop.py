@@ -24,3 +24,12 @@ def cmp_angle(p1, p2, p0=Point_2D(0, 0)):
         return -1
     else:
         return 0
+
+
+def cmp_x(p1, p2):
+    if p1.x > p2.x:
+        return 1
+    elif p1.x < p2.x:
+        return -1
+    else:
+        return 0

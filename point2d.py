@@ -18,7 +18,7 @@ class Point_2D(object):
         return "Point(%s, %s)" % (self.x, self.y)
 
     def __repr__(self):
-        return "Point_2D(%s, %s)" % (self.x, self.y)
+        return "Point(%s, %s)" % (self.x, self.y)
 
     def d(self, p):
         if self == p:
@@ -28,7 +28,11 @@ class Point_2D(object):
 
 
 # 随机生成点
-def rand_node_gen(map_size, node_amount):
-    nodes = [Point_2D(random.uniform(0, map_size), random.uniform(
-        0, map_size)) for i in range(node_amount)]
+def RandomNode(map_size):
+    newPoint = Point_2D(random.uniform(0, map_size), random.uniform(0, map_size))
+    return newPoint
+
+# 批量随机生成点
+def RandomNodeGeneration(map_size, node_amount):
+    nodes = [RandomNode(map_size) for i in range(node_amount)]
     return nodes
