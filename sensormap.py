@@ -5,6 +5,7 @@ import random
 import math
 import networkx as nx
 import matplotlib.pyplot as plt
+import convexhull as ch
 from point2d import *
 from tsp import *
 
@@ -57,11 +58,9 @@ class SimplePolygon(object):
                     raise TypeError
         self.V = list(vertexes)
         self.V.sort(cmp=cmp_x)
-        V0 = self.V[1:]
-        V0.sort(lambda x, y: cmp_angle(x, y, self.V[0]))
-        self.V[1:] = V0
+        self.V[1:] = sorted(self.V[1:], cmp=lambda x, y: cmp_angle(x, y, self.V[0]))
 
-    def Add(self, point):
+    def add(self, point):
         if not isinstance(point, Point_2D):
             raise TypeError
         if point not in self.V:
@@ -70,12 +69,12 @@ class SimplePolygon(object):
             V0.sort(lambda x, y: cmp_angle(x, y, self.V[0]))
             self.V[1:] = V0
 
-    def Del(self, point):
+    def delete(self, point):
         if point in self.V:
             self.V.remove(point)
 
     def draw(self):
-        G = nx.Graph()
+        G = nx.DiGraph()
         G.add_nodes_from(range(len(self.V)))
         pos = {i: (self.V[i].x, self.V[i].y) for i in range(len(self.V))}
         for i in range(len(self.V)):
@@ -117,19 +116,28 @@ class Map(object):
             count = 0
             X = random.uniform(0, self.size)
             Y = random.uniform(0, self.size)
-            if self.map(rand_x, rand_y).isBarrier():
+            if self.map(X, Y).isBarrier():
                 continue
             self.sensors.append(SensorNode(X, Y, count))
             count += 1
         return self.sensors
 
+# test code
+
 
 test = tsp()
 mapsize = 1000
 test.randomnodes(mapsize, 20)
-poly = SimplePolygon(*test.nodes)
+poly1 = SimplePolygon(*test.nodes)
+poly1.draw()
+plt.show()
+'''
+poly2 = SimplePolygon(*ch.graham_scan(poly1.V))
+poly2.draw()
+plt.show()
+'''
+'''
+poly.add(RandomNode(mapsize))
 poly.draw()
 plt.show()
-poly.Add(RandomNode(mapsize))
-poly.draw()
-plt.show()
+'''
