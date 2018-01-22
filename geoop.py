@@ -56,12 +56,22 @@ def isIntersect(segA, segB):
 
 
 def Intersection(segA, segB):
-    if isIntersect(segA, segB) and segA.k != segB.k:
-        pass
+    if isIntersect(segA, segB):
+        m1 = cross_product(segB.pa, segA.pb, segA.pa)
+        m2 = cross_product(segB.pb, segA.pb, segA.pa)
+        x, y = 0, 0
+        if m1 - m2 != 0:
+            x = (m1 * segB.pb.x - m2 * segB.pa.x) / (m1 - m2)
+            y = (m1 * segB.pb.y - m2 * segB.pa.y) / (m1 - m2)
+            return Point_2D(x, y)
+    return None
 
 
+'''
 SegA = segment(Point_2D(0, 0), Point_2D(1, 1))
-SegB = segment(Point_2D(0.001, 0.001), Point_2D(-1, -1))
+SegB = segment(Point_2D(0.5, 0), Point_2D(0, 0.5))
 print isIntersect(SegA, SegB)
+print Intersection(SegA, SegB)
 print SegA, SegB
 print SegA.k, SegB.k
+'''

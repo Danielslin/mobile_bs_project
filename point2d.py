@@ -33,7 +33,7 @@ class segment(object):
     def __init__(self, pa, pb):
         self.pa, self.pb = pa, pb
         self.len = pa.d(pb)
-        self.k = pb.y - pa.y / pb.x - pa.x
+        self.k = (pb.y - pa.y) / (pb.x - pa.x)
 
     def __eq__(self, other):
         return (self.pa, self.pb) == (other.pa, other.pb)
