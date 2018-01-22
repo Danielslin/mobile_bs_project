@@ -55,14 +55,14 @@ class SimplePolygon(object):
         if len(vertexes) > 0:
             for vertex in vertexes:
                 if not isinstance(vertex, Point_2D):
-                    raise TypeError
+                    raise TypeError('vertex is not Point_2D')
         self.V = list(vertexes)
         self.V.sort(cmp=cmp_x)
         self.V[1:] = sorted(self.V[1:], cmp=lambda x, y: cmp_angle(x, y, self.V[0]))
 
     def add(self, point):
         if not isinstance(point, Point_2D):
-            raise TypeError
+            raise TypeError('vertex is not Point_2D')
         if point not in self.V:
             self.V.append(point)
             V0 = self.V[1:]
@@ -85,13 +85,24 @@ class SimplePolygon(object):
         nx.draw(G, pos, with_labels=True)
         return G
 
+    def isConcavePoint(self, point):
+        if point in self.V:
+            i = self.V.index(point)
+            if i > 0 and i < len(self.V) - 1:
+                return (cross_product(self.V[i - 1], self.V[i + 1], self.V[i]) > 0)
+            elif i == 0:
+                return (cross_product(self.V[-1], self.V[1], self.V[0]) > 0)
+            elif i == len(self.V) - 1:
+                return (cross_product(self.V[-2], self.V[0], self.V[-1]) > 0)
+            else:
+                raise Exception('point not in polygon')
+
 
 class Map(object):
 
     def __init__(self, size_of_map, res=10):
-
         if math.log10(res) not in RES_CLASS:
-            raise ValueError
+            raise ValueError('resolution out of range')
         self._accuracy = int(math.log10(res))
         self.size = size_of_map
         self.res = float(res)
@@ -122,6 +133,7 @@ class Map(object):
             count += 1
         return self.sensors
 
+
 # test code
 
 
@@ -129,6 +141,8 @@ test = tsp()
 mapsize = 1000
 test.randomnodes(mapsize, 20)
 poly1 = SimplePolygon(*test.nodes)
+for index, p in enumerate(poly1.V):
+    print index, poly1.isConcavePoint(p)
 poly1.draw()
 plt.show()
 '''
