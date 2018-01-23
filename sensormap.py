@@ -56,11 +56,30 @@ class SimplePolygon(object):
             for vertex in vertexes:
                 if not isinstance(vertex, Point_2D):
                     raise TypeError('vertex is not Point_2D')
-        self.V = list(vertexes)
+        self.V = list(set(vertexes))
         self.V.sort(cmp=cmp_x)
         self.V[1:] = sorted(self.V[1:], cmp=lambda x, y: cmp_angle(x, y, self.V[0]))
 
-    def add(self, point):
+    def __getitem__(self, index):
+        return self.V[index]
+
+    def __len__(self):
+        return len(self.V)
+
+    def __add__(self, other_poly):
+        self.V.extend(other_poly.V)
+        return SimplePolygon(self.V)
+
+    def __iter__(self):
+        return iter(self.V)
+
+    def next(self):
+        return iter(self.V).next()
+
+    def index(self, vertex):
+        return self.V.index(vertex)
+
+    def addPoint(self, point):
         if not isinstance(point, Point_2D):
             raise TypeError('vertex is not Point_2D')
         if point not in self.V:
@@ -69,20 +88,32 @@ class SimplePolygon(object):
             V0.sort(lambda x, y: cmp_angle(x, y, self.V[0]))
             self.V[1:] = V0
 
-    def delete(self, point):
+    def delPoint(self, point):
         if point in self.V:
             self.V.remove(point)
 
+    def get_edges(self):
+        edges = []
+        for i, vertex in enumerate(self.V):
+            if i != len(self.V) - 1:
+                edges.append(segment(vertex, self.V[i + 1]))
+            else:
+                edges.append(segment(vertex, self.V[0]))
+        return edges
+
+    def pos(self):
+        return {i: (self[i].x, self[i].y) for i in range(len(self))}
+
     def draw(self):
-        G = nx.DiGraph()
+        G = nx.Graph()
         G.add_nodes_from(range(len(self.V)))
-        pos = {i: (self.V[i].x, self.V[i].y) for i in range(len(self.V))}
-        for i in range(len(self.V)):
-            if i < len(self.V) - 1:
+        pos = {i: (i.x, i.y) for i in self}
+        for i in range(len(self)):
+            if i < len(self) - 1:
                 G.add_edge(i, i + 1)
             else:
                 G.add_edge(i, 0)
-        nx.draw(G, pos, with_labels=True)
+        nx.draw(G, pos, with_labels=False)
         return G
 
     def isConcavePoint(self, point):
@@ -136,15 +167,17 @@ class Map(object):
 
 # test code
 
-
+'''
 test = tsp()
 mapsize = 1000
 test.randomnodes(mapsize, 20)
 poly1 = SimplePolygon(*test.nodes)
-for index, p in enumerate(poly1.V):
-    print index, poly1.isConcavePoint(p)
 poly1.draw()
 plt.show()
+for i in range(len(poly1)):
+    print poly1[i]
+print poly1.get_edges()
+'''
 '''
 poly2 = SimplePolygon(*ch.graham_scan(poly1.V))
 poly2.draw()

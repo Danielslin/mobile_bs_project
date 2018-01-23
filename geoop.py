@@ -63,7 +63,7 @@ def Intersection(segA, segB):
         if m1 - m2 != 0:
             x = (m1 * segB.pb.x - m2 * segB.pa.x) / (m1 - m2)
             y = (m1 * segB.pb.y - m2 * segB.pa.y) / (m1 - m2)
-            return Point_2D(x, y)
+        return Point_2D(x, y)
     return None
 
 

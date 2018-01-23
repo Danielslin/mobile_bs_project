@@ -21,6 +21,15 @@ class Point_2D(object):
     def __repr__(self):
         return "Point(%s, %s)" % (self.x, self.y)
 
+    def __mul__(self, num):
+        return Point_2D(self.x * num, self.y * num)
+
+    def __add__(self, other):
+        return Point_2D(self.x + other.x, self.y + other.y)
+
+    def __sub__(self, other):
+        return Point_2D(self.x - other.x, self.y - other.y)
+
     def d(self, p):
         if self == p:
             return 0.0
@@ -33,7 +42,6 @@ class segment(object):
     def __init__(self, pa, pb):
         self.pa, self.pb = pa, pb
         self.len = pa.d(pb)
-        self.k = (pb.y - pa.y) / (pb.x - pa.x)
 
     def __eq__(self, other):
         return (self.pa, self.pb) == (other.pa, other.pb)
