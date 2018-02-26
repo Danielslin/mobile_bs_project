@@ -59,6 +59,7 @@ class SimplePolygon(object):
         self.V = list(set(vertexes))
         self.V.sort(cmp=cmp_x)
         self.V[1:] = sorted(self.V[1:], cmp=lambda x, y: cmp_angle(x, y, self.V[0]))
+        self.edges = []
 
     def __getitem__(self, index):
         return self.V[index]
@@ -93,27 +94,28 @@ class SimplePolygon(object):
             self.V.remove(point)
 
     def get_edges(self):
-        edges = []
+        e = []
         for i, vertex in enumerate(self.V):
             if i != len(self.V) - 1:
-                edges.append(segment(vertex, self.V[i + 1]))
+                e.append(segment(vertex, self.V[i + 1]))
             else:
-                edges.append(segment(vertex, self.V[0]))
-        return edges
+                e.append(segment(vertex, self.V[0]))
+        self.edges = e
+        return e
 
     def pos(self):
-        return {i: (self[i].x, self[i].y) for i in range(len(self))}
+        return {i: (i.x, i.y) for i in self.V}
 
     def draw(self):
         G = nx.Graph()
         G.add_nodes_from(range(len(self.V)))
-        pos = {i: (i.x, i.y) for i in self}
+        pos = {i: (self[i].x, self[i].y) for i in range(len(self))}
         for i in range(len(self)):
             if i < len(self) - 1:
                 G.add_edge(i, i + 1)
             else:
                 G.add_edge(i, 0)
-        nx.draw(G, pos, with_labels=False)
+        nx.draw(G, pos, with_labels=True)
         return G
 
     def isConcavePoint(self, point):
@@ -128,6 +130,16 @@ class SimplePolygon(object):
             else:
                 raise Exception('point not in polygon')
 
+    def isVisible(self, ViewPoint, TargetPoint):
+        if not self.edges:
+            self.get_edges()
+        if ViewPoint == TargetPoint:
+            return True
+        seg = segment(ViewPoint, TargetPoint)
+        for edge in self.edges:
+            if isIntersect(seg, edge) and not isCollinear(seg, edge):
+                return False
+        return True
 
 class Map(object):
 
@@ -167,24 +179,13 @@ class Map(object):
 
 # test code
 
-'''
+
 test = tsp()
 mapsize = 1000
 test.randomnodes(mapsize, 20)
 poly1 = SimplePolygon(*test.nodes)
 poly1.draw()
 plt.show()
-for i in range(len(poly1)):
-    print poly1[i]
-print poly1.get_edges()
-'''
-'''
-poly2 = SimplePolygon(*ch.graham_scan(poly1.V))
-poly2.draw()
-plt.show()
-'''
-'''
-poly.add(RandomNode(mapsize))
-poly.draw()
-plt.show()
-'''
+
+for vertex in poly1:
+    print poly1.isVisible(poly1[0], vertex)

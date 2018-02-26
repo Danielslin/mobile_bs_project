@@ -55,6 +55,14 @@ def isIntersect(segA, segB):
     return False
 
 
+def isCollinear(segA, segB):
+    k1 = (segB.pb.y - segB.pa.y) / (segB.pb.x - segB.pa.x)
+    k2 = (segA.pb.y - segA.pa.y) / (segA.pb.x - segA.pa.x)
+    if k1 == k2 and isIntersect(segA, segB):
+        return True
+    return False
+
+
 def Intersection(segA, segB):
     if isIntersect(segA, segB):
         m1 = cross_product(segB.pa, segA.pb, segA.pa)
@@ -63,15 +71,15 @@ def Intersection(segA, segB):
         if m1 - m2 != 0:
             x = (m1 * segB.pb.x - m2 * segB.pa.x) / (m1 - m2)
             y = (m1 * segB.pb.y - m2 * segB.pa.y) / (m1 - m2)
-        return Point_2D(x, y)
+            return Point_2D(x, y)
     return None
 
 
-'''
+
 SegA = segment(Point_2D(0, 0), Point_2D(1, 1))
-SegB = segment(Point_2D(0.5, 0), Point_2D(0, 0.5))
+SegB = segment(Point_2D(1, 1), Point_2D(2, 2))
 print isIntersect(SegA, SegB)
+print isCollinear(SegA, SegB)
 print Intersection(SegA, SegB)
 print SegA, SegB
-print SegA.k, SegB.k
-'''
+

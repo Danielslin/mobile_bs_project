@@ -38,7 +38,7 @@ def Rogers(polygon):
 
     return result
 
-
+'''
 test = tsp.tsp()
 mapsize = 1000
 test.randomnodes(mapsize, 20)
@@ -56,3 +56,4 @@ graph = nx.compose_all(graphs)
 nx.convert_node_labels_to_integers(graph)
 nx.draw(graph, pos, with_labels=False)
 plt.show()
+'''
