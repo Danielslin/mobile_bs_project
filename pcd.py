@@ -38,6 +38,46 @@ def Rogers(polygon):
 
     return result
 
+
+def fastPCD(polygon):
+    concaves = []
+    visible = {}
+    a, b, c = {}, {}, {}
+    sp = []
+    # 搜索全部的凹点
+    for vertex in polygon:
+        if polygon.isConcavePoint(vertex):
+            concaves.append(vertex)
+    # 没有凹点则返回自身
+    if not concaves:
+        return polygon
+    else:
+        # 将可见点分成A、B、C三类
+        for point in concaves:
+            visible[point] = polygon.VisiblePoints(point)
+            sa[point] = [p for p in visible[point] if cross_product(
+                point, p, polygon.previousPoint(point)) * cross_product(
+                    point, p, polygon.nextPoint(point)) < 0]
+            sb[point] = [p for p in visible[point] if cross_product(
+                point, p, polygon.previousPoint(point)) < 0 and cross_product(
+                    point, p, polygon.nextPoint(point)) < 0]
+            sc[point] = [p for p in visible[point] if cross_product(
+                point, p, polygon.previousPoint(point)) > 0 and cross_product(
+                    point, p, polygon.nextPoint(point)) > 0]
+        for point in concaves:
+            sp = []
+            if sa[point]:
+                for p in sa[point]:
+                # 如果是p是凹点且当前点在p的a类中，则将p加入sp
+                    if polygon.isConcavePoint(p) and point in sa[p]:
+                        sp.append(p)
+                if not sp:
+                    sp = sa[point][:]
+        # 如果集合SP中的顶点只有一个，则选中该点
+        # 否则求出SP顶点中的权值
+        # ……
+
+
 '''
 test = tsp.tsp()
 mapsize = 1000

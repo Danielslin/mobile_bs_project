@@ -74,12 +74,11 @@ def Intersection(segA, segB):
             return Point_2D(x, y)
     return None
 
-
-
-SegA = segment(Point_2D(0, 0), Point_2D(1, 1))
-SegB = segment(Point_2D(1, 1), Point_2D(2, 2))
-print isIntersect(SegA, SegB)
-print isCollinear(SegA, SegB)
-print Intersection(SegA, SegB)
+'''
+SegA = segment(RandomNode(1000), RandomNode(1000))
+SegB = segment(RandomNode(1000), RandomNode(1000))
 print SegA, SegB
-
+print SegA.midPoint(),SegB.midPoint()
+print SegA.pointInSegment(SegA.midPoint())
+print SegB.pointInSegment(SegB.midPoint())
+'''

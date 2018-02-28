@@ -6,17 +6,20 @@ import math
 class Point_2D(object):
 
     def __init__(self, x, y):
-        self.x = float(x)
-        self.y = float(y)
+        self.x = x
+        self.y = y
 
     def __eq__(self, other):
-        return (self.x, self.y) == (other.x, other.y)
+        return self.x == other.x and self.y == other.y
+
+    def __ne__(self, other):
+        return self.x != other.x or self.y != other.y
 
     def __hash__(self):
         return hash(str(self.x) + ',' + str(self.y))
 
     def __str__(self):
-        return "Point(%s, %s)" % (self.x, self.y)
+        return "(%s, %s)" % (self.x, self.y)
 
     def __repr__(self):
         return "Point(%s, %s)" % (self.x, self.y)
@@ -67,10 +70,18 @@ class segment(object):
     def maxY(self):
         return max(self.pa.y, self.pb.y)
 
+    def midPoint(self):
+        return Point_2D(math.fsum([self.pa.x, self.pb.x]) / 2.0, math.fsum([self.pa.y, self.pb.y]) / 2.0)
+
+    def pointInSegment(self, p):
+        return (self.pa.x - p.x) * (self.pb.y - p.y) - (
+            self.pb.x - p.x) * (self.pa.y - p.y) == 0 and p.x >= self.minX() and p.x <= self.maxX()
+
 
 # 随机生成点
 def RandomNode(map_size):
-    newPoint = Point_2D(random.uniform(0, map_size), random.uniform(0, map_size))
+    newPoint = Point_2D(random.randint(0, map_size),
+                        random.randint(0, map_size))
     return newPoint
 
 

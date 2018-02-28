@@ -58,7 +58,8 @@ class SimplePolygon(object):
                     raise TypeError('vertex is not Point_2D')
         self.V = list(set(vertexes))
         self.V.sort(cmp=cmp_x)
-        self.V[1:] = sorted(self.V[1:], cmp=lambda x, y: cmp_angle(x, y, self.V[0]))
+        self.V[1:] = sorted(self.V[1:], cmp=lambda x,
+                            y: cmp_angle(x, y, self.V[0]))
         self.edges = []
 
     def __getitem__(self, index):
@@ -92,6 +93,18 @@ class SimplePolygon(object):
     def delPoint(self, point):
         if point in self.V:
             self.V.remove(point)
+
+    def nextPoint(self, point):
+        if self.index(point) == len(self) - 1:
+            return self[0]
+        else:
+            return self[self.index(point) + 1]
+
+    def previousPoint(self, point):
+        if self.index(point) == 0:
+            return self[-1]
+        else:
+            return self[self.index(point) - 1]
 
     def get_edges(self):
         e = []
@@ -130,6 +143,22 @@ class SimplePolygon(object):
             else:
                 raise Exception('point not in polygon')
 
+    def pointInPoly(self, point):
+        if not self.edges:
+            self.get_edges()
+        count = 0
+        seg = segment(Point_2D(0, point.y), point)
+        for edge in self.edges:
+            if edge.pointInSegment(point):
+                return True
+            if edge.pb.x != edge.pa.x:
+                if (seg.pointInSegment(edge.pa) and edge.maxY() == edge.pa.y) or (
+                        seg.pointInSegment(edge.pb) and edge.maxY() == edge.pb.y):
+                    count += 1
+                elif isIntersect(seg, edge):
+                    count += 1
+        return count % 2 != 0
+
     def isVisible(self, ViewPoint, TargetPoint):
         if not self.edges:
             self.get_edges()
@@ -137,9 +166,17 @@ class SimplePolygon(object):
             return True
         seg = segment(ViewPoint, TargetPoint)
         for edge in self.edges:
-            if isIntersect(seg, edge) and not isCollinear(seg, edge):
-                return False
+            if isIntersect(seg, edge):
+                ints = Intersection(seg, edge)
+                if ints and ints != seg.pa and ints != seg.pb:
+                    return False
+                if not self.pointInPoly(seg.midPoint()):
+                    return False
         return True
+
+    def VisiblePoints(self, ViewPoint):
+        return [point for point in self.V if self.isVisible(ViewPoint, point)]
+
 
 class Map(object):
 
@@ -177,15 +214,14 @@ class Map(object):
         return self.sensors
 
 
-# test code
-
-
 test = tsp()
 mapsize = 1000
 test.randomnodes(mapsize, 20)
 poly1 = SimplePolygon(*test.nodes)
+
+for point in poly1:
+    print poly1.index(point)
+    print poly1.previousPoint(point)
+    print poly1.nextPoint(point)
 poly1.draw()
 plt.show()
-
-for vertex in poly1:
-    print poly1.isVisible(poly1[0], vertex)
